@@ -15,8 +15,14 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-//치
+//################################
+//###        WordCount         ###
+//################################
 public class WordCount extends Configured implements Tool { //Tool
+
+    //################################
+    //###     TokenizerMapper      ###
+    //################################
     public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
 
         private final static IntWritable one = new IntWritable(1);
@@ -32,6 +38,9 @@ public class WordCount extends Configured implements Tool { //Tool
         }
     }
 
+    //################################
+    //###      IntSumReducer       ###
+    //################################
     public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
         private IntWritable result = new IntWritable();
 
@@ -47,7 +56,9 @@ public class WordCount extends Configured implements Tool { //Tool
         }
     }
 
-    //Tool Override로 구현 
+    //################################
+    //###           run            ###
+    //################################ 
     @Override
     public int run(String[] args) throws Exception {
         //드라이버 구현 
@@ -67,6 +78,9 @@ public class WordCount extends Configured implements Tool { //Tool
         return job.waitForCompletion(true) ? 0 : 1;
     }
 
+    //################################
+    //###           main           ###
+    //################################ 
     public static void main(String[] args) throws Exception {
         int exitCode = ToolRunner.run(new WordCount(), args);
         System.exit(exitCode);
