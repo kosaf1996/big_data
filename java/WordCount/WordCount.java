@@ -21,38 +21,40 @@ import java.util.StringTokenizer;
 public class WordCount extends Configured implements Tool { //Tool
 
     //################################
-    //###     TokenizerMapper      ###
+    //###       Mapper Class       ###
     //################################
     public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
 
-        private final static IntWritable one = new IntWritable(1);
-        protected Text word = new Text();
+        private final static IntWritable one = new IntWritable(1); //Output 결과값 
+        protected Text word = new Text(); //map function 결과 저장 
 
+        //Map Function
         @Override
         protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
-            while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken().toLowerCase());
-                context.write(word, one);
+            StringTokenizer itr = new StringTokenizer(value.toString()); //value Tokenizer(Text를 여러개의 Token으로 나누는 것)
+            while (itr.hasMoreTokens()) { //결과를 while 문으로 반복 
+                word.set(itr.nextToken().toLowerCase()); //word 객체 set
+                context.write(word, one); //결과 값 : (hadoop, 1)
             }
         }
     }
 
     //################################
-    //###      IntSumReducer       ###
+    //###      Reducer Class       ###
     //################################
     public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
         private IntWritable result = new IntWritable();
 
+        //Reduce Function 
         @Override
         protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            int sum = 0;
-            for (IntWritable val : values) {
-                sum += val.get();
+            int sum = 0; //단어 개수 계산
+            for (IntWritable val : values) {  
+                sum += val.get(); 
             }
 
-            result.set(sum);
-            context.write(key, result);
+            result.set(sum); //결과 set
+            context.write(key, result); //(hadoop, 3)
         }
     }
 
@@ -64,25 +66,25 @@ public class WordCount extends Configured implements Tool { //Tool
         //드라이버 구현 
         Job job = Job.getInstance(getConf(), "WordCount"); //job 객체 구현 
 
-        job.setJarByClass(WordCount.class);  //주어진 class 를 포함하는 hadoop 파일을 찾아 셋팅  
+        job.setJarByClass(WordCount.class);  //hadoop 파일을 찾아 셋팅  
 
-        job.setMapperClass(TokenizerMapper.class); //주어진 class 를 포함하는 Mapper를 찾아 셋팅
-        job.setReducerClass(IntSumReducer.class);
+        job.setMapperClass(TokenizerMapper.class); //Mapper Class Call
+        job.setReducerClass(IntSumReducer.class); //Reduce Class Call
 
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputKeyClass(Text.class); //Job 결과 Key Class Call
+        job.setOutputValueClass(IntWritable.class); //Job 결과 value Class Call
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        FileInputFormat.addInputPath(job, new Path(args[0])); //args[0]번 값 입력
+        FileOutputFormat.setOutputPath(job, new Path(args[1])); //args[0]번 값 출력
 
-        return job.waitForCompletion(true) ? 0 : 1;
+        return job.waitForCompletion(true) ? 0 : 1; //정상 0 리턴 비정상 1 리턴 
     }
 
     //################################
     //###           main           ###
     //################################ 
     public static void main(String[] args) throws Exception {
-        int exitCode = ToolRunner.run(new WordCount(), args);
+        int exitCode = ToolRunner.run(new WordCount(), args); //run Function Call
         System.exit(exitCode);
     }
 }
