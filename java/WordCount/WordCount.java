@@ -23,7 +23,7 @@ public class WordCount extends Configured implements Tool { //Tool
     //################################
     //###       Mapper Class       ###
     //################################
-    public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
+    public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> { //Mapper<Object, Text, Text, IntWritable>  = Mapper<Input Key class, Input value class, Output key class, Output value class >
 
         private final static IntWritable one = new IntWritable(1); //Output 결과값 
         protected Text word = new Text(); //map function 결과 저장 
@@ -42,12 +42,18 @@ public class WordCount extends Configured implements Tool { //Tool
     //################################
     //###      Reducer Class       ###
     //################################
-    public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+    public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {//Reducer<Object, Text, Text, IntWritable>  = Mapper<Input Key class, Input value class, Output key class, Output value class >
         private IntWritable result = new IntWritable();
+        //IntWritable : Map과 Reduce 사이에 데이터를 주고 받을 떄 네트워크를 통해 주고 받는다.
+        // 객체를 네트워크를 통해 전송하면 데이터의 형태 변경되거나 다르게 해석될수 있다. 
+        // 이를위해 직렬화와 역직렬화 과정이 필요하다 이를 위한 자료형을 정의한다.
+
+        //직렬화 : 네트워크전송을위한 구조화된 객체를 바이트 스트림 으로 전환
+        //역직렬화 : 바이트스트림을 구조화된 객체로 전환 
 
         //Reduce Function 
         @Override
-        protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+        protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException { //단어가 키가되어 같은 단어 끼리 하나의 Reduce 로 모인다. 
             int sum = 0; //단어 개수 계산
             for (IntWritable val : values) {  
                 sum += val.get(); 
