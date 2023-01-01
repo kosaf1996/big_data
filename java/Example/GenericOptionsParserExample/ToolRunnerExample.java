@@ -8,7 +8,9 @@ import org.apache.hadoop.util.ToolRunner;
 import java.util.Arrays;
 
 public class ToolRunnerExample extends Configured implements Tool {
-
+    //################################
+    //###           run            ###
+    //################################ 
     @Override
     public int run(String[] args) {
         Configuration conf = getConf();
@@ -21,8 +23,11 @@ public class ToolRunnerExample extends Configured implements Tool {
         return 0;
     }
 
+    //################################
+    //###           main           ###
+    //################################ 
     public static void main(String[] args) throws Exception {
-        int exitCode = ToolRunner.run(new ToolRunnerExample(), args);
+        int exitCode = ToolRunner.run(new ToolRunnerExample(), args); //run function call
         System.exit(exitCode);
     }
 }
